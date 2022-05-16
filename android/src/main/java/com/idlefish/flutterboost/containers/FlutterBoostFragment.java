@@ -314,7 +314,9 @@ public class FlutterBoostFragment extends FlutterFragment implements FlutterView
     private void performAttach() {
         if (!isAttached) {
             // Attach plugins to the activity.
-            getFlutterEngine().getActivityControlSurface().attachToActivity(getActivity(), getLifecycle());
+            // CHC改
+//            getFlutterEngine().getActivityControlSurface().attachToActivity(getActivity(), getLifecycle());
+            getFlutterEngine().getActivityControlSurface().attachToActivity(fakeAppComponent, getLifecycle());
 
             if (platformPlugin == null) {
                 platformPlugin = new PlatformPlugin(getActivity(), getFlutterEngine().getPlatformChannel());
@@ -326,6 +328,17 @@ public class FlutterBoostFragment extends FlutterFragment implements FlutterView
             if (DEBUG) Log.d(TAG, "#performAttach: " + this);
         }
     }
+
+    // CHC加
+    class FakeExclusiveAppComponent implements io.flutter.embedding.android.ExclusiveAppComponent<Activity> {
+        public void detachFromFlutterEngine() {}
+
+        public Activity getAppComponent() {
+            return getActivity();
+        }
+    }
+    // CHC加
+    private FakeExclusiveAppComponent fakeAppComponent = new FakeExclusiveAppComponent();
 
     private void performDetach() {
         if (isAttached) {

@@ -15,9 +15,9 @@ import io.flutter.embedding.engine.renderer.FlutterRenderer;
 
 
 class FlutterTextureHooker {
-    private SurfaceTexture     restoreSurface;
+    private SurfaceTexture restoreSurface;
     private FlutterTextureView flutterTextureView;
-    private boolean            isNeedRestoreState = false;
+    private boolean isNeedRestoreState = false;
 
     /**
      * Release surface when Activity.onDestroy / Fragment.onDestroy.
@@ -27,7 +27,7 @@ class FlutterTextureHooker {
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
             int containerSize = FlutterContainerManager.instance().getContainerSize();
             if (containerSize == 1) {
-                FlutterEngine   engine   = FlutterBoost.instance().getEngine();
+                FlutterEngine engine = FlutterBoost.instance().getEngine();
                 FlutterRenderer renderer = engine.getRenderer();
                 renderer.stopRenderingToSurface();
             }
@@ -46,8 +46,8 @@ class FlutterTextureHooker {
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
             if (restoreSurface != null && flutterTextureView != null && isNeedRestoreState) {
                 try {
-                    Class<? extends FlutterTextureView> aClass                         = flutterTextureView.getClass();
-                    Field                               isSurfaceAvailableForRendering = aClass.getDeclaredField("isSurfaceAvailableForRendering");
+                    Class<? extends FlutterTextureView> aClass = flutterTextureView.getClass();
+                    Field isSurfaceAvailableForRendering = aClass.getDeclaredField("isSurfaceAvailableForRendering");
                     isSurfaceAvailableForRendering.setAccessible(true);
                     isSurfaceAvailableForRendering.set(flutterTextureView, true);
 
@@ -58,8 +58,8 @@ class FlutterTextureHooker {
                         if (engine != null) {
 
                             FlutterRenderer flutterRenderer = engine.getRenderer();
-                            Surface         surface         = new Surface(restoreSurface);
-                            flutterRenderer.startRenderingToSurface(surface);
+                            Surface surface = new Surface(restoreSurface);
+                            flutterRenderer.startRenderingToSurface(surface, true);
 
                             flutterTextureView.setSurfaceTexture(restoreSurface);
                         }
@@ -78,7 +78,7 @@ class FlutterTextureHooker {
      */
     public void hookFlutterTextureView(FlutterTextureView flutterTextureView) {
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
-            if(flutterTextureView!=null){
+            if (flutterTextureView != null) {
                 TextureView.SurfaceTextureListener surfaceTextureListener = flutterTextureView.getSurfaceTextureListener();
                 this.flutterTextureView = flutterTextureView;
                 this.flutterTextureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
@@ -96,8 +96,8 @@ class FlutterTextureHooker {
                     @Override
                     public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
                         try {
-                            Class<? extends FlutterTextureView> aClass                         = flutterTextureView.getClass();
-                            Field                               isSurfaceAvailableForRendering = aClass.getDeclaredField("isSurfaceAvailableForRendering");
+                            Class<? extends FlutterTextureView> aClass = flutterTextureView.getClass();
+                            Field isSurfaceAvailableForRendering = aClass.getDeclaredField("isSurfaceAvailableForRendering");
                             isSurfaceAvailableForRendering.setAccessible(true);
                             isSurfaceAvailableForRendering.set(flutterTextureView, false);
 
